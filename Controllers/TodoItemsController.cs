@@ -1,8 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TestWebApi.Models;
 
 [Route("api/[controller]")]
@@ -11,18 +16,23 @@ public class TodoItemsController : ControllerBase
 {
     private readonly TodoContext _context;
 
-    public TodoItemsController(TodoContext context)
+    public TodoItemsController(IConfiguration configuration)
     {
-        _context = context;
+        Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
 
     // GET: api/TodoItems
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
+    public async Task<ActionResult> GetTodoItems()
     {
-        return await _context.TodoItems
-            .Select(x => ItemToDTO(x))
-            .ToListAsync();
+        var connStr = Configuration.GetConnectionString("TodoItems");
+        // Query Model
+        var conn = new SqlConnection(connStr);
+        var sql = "SELECT * FROM TodoItem";
+        IEnumerable<TodoItem> results = await conn.QueryAsync<TodoItem>(sql);
+        return Ok(results);
     }
 
     [HttpGet("{id}")]
@@ -68,16 +78,40 @@ public class TodoItemsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItemDTO)
+    public async Task<ActionResult> PostTodoItem(TodoItemDTO todoItemDTO)
     {
         var todoItem = new TodoItem
         {
+            Id = todoItemDTO.Id,
             IsComplete = todoItemDTO.IsComplete,
-            Name = todoItemDTO.Name
+            Name = todoItemDTO.Name,
+
         };
 
-        _context.TodoItems.Add(todoItem);
-        await _context.SaveChangesAsync();
+        var connStr = Configuration.GetConnectionString("TodoItems");
+        // Query Model
+        var conn = new SqlConnection(connStr);
+        conn.Execute("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete});
+
+        return Ok();
+            }
+
+    [HttpPost]
+    [Route("another")]
+    public async Task<ActionResult<TodoItemDTO>> PostTodoItemOther(TodoItemDTO todoItemDTO)
+    {
+        var todoItem = new TodoItem
+        {
+            Id = todoItemDTO.Id,
+            IsComplete = todoItemDTO.IsComplete,
+            Name = todoItemDTO.Name,
+
+        };
+
+        var connStr = Configuration.GetConnectionString("TodoItems");
+        // Query Model
+        var conn = new SqlConnection(connStr);
+        conn.Execute("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new { todoItem.Id, todoItem.Name, todoItem.IsComplete });
 
         return CreatedAtAction(
             nameof(GetTodoItem),

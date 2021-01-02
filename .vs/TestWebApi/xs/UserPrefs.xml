@@ -2,9 +2,10 @@
   <MonoDevelop.Ide.ItemProperties.TestWebApi PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/TodoItemsController.cs">
     <Files>
-      <File FileName="Controllers/TodoItemsController.cs" Line="108" Column="1" />
-      <File FileName="Models/TodoItemDTO.cs" Line="8" Column="45" />
-      <File FileName="Models/TodoItem.cs" Line="9" Column="1" />
+      <File FileName="Program.cs" Line="16" Column="1" />
+      <File FileName="Startup.cs" Line="30" Column="44" />
+      <File FileName="appsettings.json" Line="11" Column="5" />
+      <File FileName="Controllers/TodoItemsController.cs" Line="24" Column="36" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -19,16 +20,13 @@
           </Node>
         </State>
       </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/louischen/WorkSpace/TestWebApi/Controllers/TodoItemsController.cs" relfile="Controllers/TodoItemsController.cs" line="73" column="1" />
+      <Breakpoint file="/Users/louischen/WorkSpace/TestWebApi/Controllers/TodoItemsController.cs" relfile="Controllers/TodoItemsController.cs" line="93" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

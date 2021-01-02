@@ -8,7 +8,7 @@ POST https://localhost:5001/api/TodoItems
 Content-Type: application/json
 
 {
-    "Id":1
+    "Id":2
     ,"Name":"測試者"
     ,"IsComplete":false
 }
@@ -22,7 +22,7 @@ POST https://{{hostname}}/api/TodoItems
 Content-Type: application/json
 
 {
-    "Id":1
+    "Id":3
     ,"Name":"測試者"
-    ,"IsComplete":false
+    ,"IsComplete":true
 }
