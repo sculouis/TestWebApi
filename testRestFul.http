@@ -8,10 +8,15 @@ POST https://localhost:5001/api/TodoItems
 Content-Type: application/json
 
 {
-    "Id":2
+    "Id":5
     ,"Name":"測試者"
     ,"IsComplete":false
 }
+
+###
+@Id = 5
+DELETE https://localhost:5001/api/TodoItems/{{Id}}
+
 
 ###
 @hostname = webapibydb.herokuapp.com
@@ -26,3 +31,8 @@ Content-Type: application/json
     ,"Name":"測試者"
     ,"IsComplete":true
 }
+
+###
+@Id = 5
+DELETE https://{{hostname}}/api/TodoItems/{{Id}}
+

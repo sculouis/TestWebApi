@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -14,7 +15,6 @@ using TestWebApi.Models;
 [ApiController]
 public class TodoItemsController : ControllerBase
 {
-    private readonly TodoContext _context;
 
     public TodoItemsController(IConfiguration configuration)
     {
@@ -38,44 +38,14 @@ public class TodoItemsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoItemDTO>> GetTodoItem(long id)
     {
-        var todoItem = await _context.TodoItems.FindAsync(id);
-
-        if (todoItem == null)
-        {
-            return NotFound();
-        }
-
-        return ItemToDTO(todoItem);
+        return  NoContent();
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTodoItem(long id, TodoItemDTO todoItemDTO)
     {
-        if (id != todoItemDTO.Id)
-        {
-            return BadRequest();
-        }
-
-        var todoItem = await _context.TodoItems.FindAsync(id);
-        if (todoItem == null)
-        {
-            return NotFound();
-        }
-
-        todoItem.Name = todoItemDTO.Name;
-        todoItem.IsComplete = todoItemDTO.IsComplete;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException) when (!TodoItemExists(id))
-        {
-            return NotFound();
-        }
-
-        return NoContent();
-    }
+         return  NoContent();
+   }
 
     [HttpPost]
     public async Task<ActionResult> PostTodoItem(TodoItemDTO todoItemDTO)
@@ -91,9 +61,8 @@ public class TodoItemsController : ControllerBase
         var connStr = Configuration.GetConnectionString("TodoItems");
         // Query Model
         var conn = new SqlConnection(connStr);
-        conn.Execute("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete});
-
-        return Ok();
+        await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete});
+        return Created("",todoItem);
             }
 
     [HttpPost]
@@ -111,32 +80,25 @@ public class TodoItemsController : ControllerBase
         var connStr = Configuration.GetConnectionString("TodoItems");
         // Query Model
         var conn = new SqlConnection(connStr);
-        conn.Execute("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new { todoItem.Id, todoItem.Name, todoItem.IsComplete });
+        await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new { todoItem.Id, todoItem.Name, todoItem.IsComplete });
 
-        return CreatedAtAction(
-            nameof(GetTodoItem),
-            new { id = todoItem.Id },
-            ItemToDTO(todoItem));
+        return Ok();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTodoItem(long id)
+    public async Task<IActionResult> DeleteTodoItem(int id)
     {
-        var todoItem = await _context.TodoItems.FindAsync(id);
 
-        if (todoItem == null)
-        {
-            return NotFound();
-        }
+        var connStr = Configuration.GetConnectionString("TodoItems");
+        // Query Model
+        var conn = new SqlConnection(connStr);
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id, DbType.Int16, ParameterDirection.Input);
 
-        _context.TodoItems.Remove(todoItem);
-        await _context.SaveChangesAsync();
+        await conn.ExecuteAsync("uspGetDelete", param:parameters);
 
-        return NoContent();
+        return Ok();
     }
-
-    private bool TodoItemExists(long id) =>
-         _context.TodoItems.Any(e => e.Id == id);
 
     private static TodoItemDTO ItemToDTO(TodoItem todoItem) =>
         new TodoItemDTO
