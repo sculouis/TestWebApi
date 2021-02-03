@@ -4,11 +4,15 @@ GET https://webapi1231.herokuapp.com/WeatherForecast
 GET https://localhost:5001/api/TodoItems
 
 ###
-POST https://localhost:5001/api/TodoItems
+GET http://localhost:5000/api/TodoItems
+
+
+###
+POST http://localhost:5000/api/TodoItems
 Content-Type: application/json
 
 {
-    "Id":5
+    "Id":7
     ,"Name":"測試者"
     ,"IsComplete":false
 }
