@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+//using Microsoft.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -27,9 +28,9 @@ public class TodoItemsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetTodoItems()
     {
-        var connStr = Configuration.GetConnectionString("TodoItems");
+        var connStr = Configuration.GetConnectionString("testdb");
         // Query Model
-        var conn = new SqlConnection(connStr);
+        var conn = new MySqlConnection(connStr);
         var sql = "SELECT * FROM TodoItem";
         IEnumerable<TodoItem> results = await conn.QueryAsync<TodoItem>(sql);
         return Ok(results);
@@ -60,7 +61,7 @@ public class TodoItemsController : ControllerBase
 
         var connStr = Configuration.GetConnectionString("TodoItems");
         // Query Model
-        var conn = new SqlConnection(connStr);
+        var conn = new MySqlConnection(connStr);
         await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete});
         return Created("",todoItem);
             }
@@ -79,7 +80,7 @@ public class TodoItemsController : ControllerBase
 
         var connStr = Configuration.GetConnectionString("TodoItems");
         // Query Model
-        var conn = new SqlConnection(connStr);
+        var conn = new MySqlConnection(connStr);
         await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new { todoItem.Id, todoItem.Name, todoItem.IsComplete });
 
         return Ok();
@@ -91,7 +92,7 @@ public class TodoItemsController : ControllerBase
 
         var connStr = Configuration.GetConnectionString("TodoItems");
         // Query Model
-        var conn = new SqlConnection(connStr);
+        var conn = new MySqlConnection(connStr);
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int16, ParameterDirection.Input);
 
