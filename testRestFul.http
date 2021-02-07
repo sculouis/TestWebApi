@@ -12,9 +12,10 @@ POST http://localhost:5000/api/TodoItems
 Content-Type: application/json
 
 {
-    "Id":7
+    "Id":3
     ,"Name":"測試者"
     ,"IsComplete":false
+    ,"Secret":"測試"
 }
 
 ###

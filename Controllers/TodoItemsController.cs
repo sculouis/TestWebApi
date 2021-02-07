@@ -49,20 +49,12 @@ public class TodoItemsController : ControllerBase
    }
 
     [HttpPost]
-    public async Task<ActionResult> PostTodoItem(TodoItemDTO todoItemDTO)
+    public async Task<ActionResult> PostTodoItem(TodoItem todoItem)
     {
-        var todoItem = new TodoItem
-        {
-            Id = todoItemDTO.Id,
-            IsComplete = todoItemDTO.IsComplete,
-            Name = todoItemDTO.Name,
-
-        };
-
-        var connStr = Configuration.GetConnectionString("TodoItems");
+        var connStr = Configuration.GetConnectionString("testdb");
         // Query Model
         var conn = new MySqlConnection(connStr);
-        await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete) values(@Id,@Name,@IsComplete)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete});
+        await conn.ExecuteAsync("insert into TodoItem(Id,Name,IsComplete,Secret) values(@Id,@Name,@IsComplete,@Secret)", new {todoItem.Id,todoItem.Name,todoItem.IsComplete,todoItem.Secret});
         return Created("",todoItem);
             }
 
@@ -90,7 +82,7 @@ public class TodoItemsController : ControllerBase
     public async Task<IActionResult> DeleteTodoItem(int id)
     {
 
-        var connStr = Configuration.GetConnectionString("TodoItems");
+        var connStr = Configuration.GetConnectionString("test");
         // Query Model
         var conn = new MySqlConnection(connStr);
         var parameters = new DynamicParameters();
